@@ -27,7 +27,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, final Bundle bundle) {
         JSONObject data = getPushData(bundle.getString("data"));
-        if (data != null ) {
+        if (data != null) {
             //support slient mode
             if(data.optInt("slient", 0) == 0) {
                 if (!bundle.containsKey("title")) {
@@ -44,7 +44,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                     JSONObject alertJSON = data.optJSONObject("alert");
                     String title = null;
                     String body  = null;
-                    if(alertJSON){
+                    if(alertJSON != null){
                       //support JSON formatted "alert"
                       //please take a look at: //https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW5
                       title = alertJSON.optString("title");
@@ -53,7 +53,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                       body = data.optString("alert", "Notification received");
                     }
 
-                    if(title) bundle.putString("title", title);
+                    if(title != null) bundle.putString("title", title);
                     bundle.putString("message", body);
                 }
             }
