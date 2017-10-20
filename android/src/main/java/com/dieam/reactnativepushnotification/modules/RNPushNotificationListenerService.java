@@ -30,9 +30,6 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         if (data != null ) {
             //support slient mode
             if(data.optInt("slient", 0) == 0) {
-                if (!bundle.containsKey("message")) {
-                    bundle.putString("message", data.optString("alert", "Notification received"));
-                }
                 if (!bundle.containsKey("title")) {
                     bundle.putString("title", data.optString("title", null));
                 }
@@ -41,6 +38,23 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 }
                 if (!bundle.containsKey("color")) {
                     bundle.putString("color", data.optString("color", null));
+                }
+
+                if (!bundle.containsKey("message")) {
+                    JSONObject alertJSON = data.optJSONObject("alert");
+                    String title = null;
+                    String body  = null;
+                    if(alertJSON){
+                      //support JSON formatted "alert"
+                      //please take a look at: //https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW5
+                      title = alertJSON.optString("title");
+                      body  = alertJSON.optString("body", "Notification received");
+                    }else{
+                      body = data.optString("alert", "Notification received");
+                    }
+
+                    if(title) bundle.putString("title", title);
+                    bundle.putString("message", body);
                 }
             }
 
